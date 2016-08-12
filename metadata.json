@@ -1,0 +1,21 @@
+{
+    "name": "nrvale0-rancher_infra",
+    "version": "0.1.0",
+    "author": "Nathan Valentine <nathan@rancher.com> | <nrvale0@gmail.com>",
+    "summary": "'deploy module' for Rancher Labs infrastructure",
+    "license": "Apache-2.0",
+    "source": "https://github.com/nrvale0/puppet-rancher_infra",
+    "project_page": "https://github.com/nrvale0/puppet-rancher_infra",
+    "issues_url": "https://github.com/nrvale0/puppet-rancher_infra/issues",
+    "dependencies": [{
+	"name": "puppetlabs-aws",
+	"version_requirement": ">= 1.4.0"
+    }],
+    "operatingsystem_support": [{
+	"operatingsystem": "Ubuntu",
+	"operatingsystemrelease": [
+	    "16.04"
+	]
+    }],
+    "data_provider": "hiera"
+}
