@@ -7,12 +7,12 @@ class rancher_infra::ci::scheduled_master_branch::deprovision::network(
     region => $aws_region,
   } ->
 
-  ec2_vpc_routetable { 'ci-scheduled-master-vpc-routing':
+  ec2_vpc_subnet { 'ci-scheduled-master-subnet':
     ensure => absent,
     region => $aws_region,
   } ->
 
-  ec2_vpc_subnet { 'ci-scheduled-master-subnet':
+  ec2_vpc_routetable { 'ci-scheduled-master-subnet-routing':
     ensure => absent,
     region => $aws_region,
   } ->

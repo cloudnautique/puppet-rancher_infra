@@ -1,0 +1,53 @@
+#!/bin/bash
+
+set -eux
+
+export DEBIAN_FRONTEND=noninteractive
+export DEBCONF_NONINTERACTIVE_SEEN=true
+
+apt-get update
+apt-get dist-upgrade -y
+apt-get install -y puppet git
+puppet resource service puppet enable=false ensure=stopped
+puppet module install garethr/docker
+puppet apply -e 'include ::docker'; sleep 5
+docker pull rancher/enterprise:latest
+docker run -d --restart=always -p 8080:8080 rancher/enterprise:latest
+
+(cd /tmp && \
+	wget -c https://github.com/rancher/cli/releases/download/v0.2.0/rancher-linux-amd64-v0.2.0.tar.gz -O rancher-cli-v0.2.0.tar.gz && \
+	tar zxvf rancher-cli-v0.2.0.tar.gz && \
+	cd rancher-v0.2.0* && \
+	cp rancher /usr/local/bin/rancher-v0.2.0 && \
+	chmod +x /usr/local/bin/rancher-v0.2.0)
+
+(cd /tmp && \
+	wget -c https://github.com/rancher/cli/releases/download/v0.1.0/rancher-linux-amd64-v0.1.0.tar.gz -O rancher-cli-v0.1.0.tar.gz && \
+	tar zxvf rancher-cli-v0.1.0.tar.gz && \
+	cd rancher-v0.1.0* && \
+	cp rancher /usr/local/bin/rancher-v0.1.0 && \
+	chmod +x /usr/local/bin/rancher-v0.1.0)
+
+ln -s /usr/local/bin/rancher-v0.1.0 /usr/local/bin/rancher
+
+mkdir -p ~/.rancher
+echo '{"url":"http://localhost:8080/v1/schemas"}' > ~/.rancher/cli.json
+
+# hang out until the service is up and listening on tcp/8088
+# while true; do
+#     echo 'Waiting for Rancher to become available on localhost:8080...'
+#     set +e ; curl -s --connect-timeout 10 http://localhost:8080
+#     if [ "0" == "$?" ]; then
+#       echo 'Succesful connection to Catalog Service on localhost:8080.'
+#       set -e
+#       break
+#     fi
+#     sleep 5
+# done
+
+# # set up our rancher/server:master instances
+# git clone https://github.com/nrvale0/rancher-infra-ci /tmp/rancher-infra-ci
+# for i in /tmp/rancher-infra-ci/scheduled_master_branch/rancher/templates/sut-rancher-server/0/envs/*; do
+#     (cd /tmp/rancher-infra-ci/scheduled_master_branch/rancher/templates/sut-rancher-server/0 && \
+# 	    rancher up -d -e $i -s "$(basename $i)")
+# done

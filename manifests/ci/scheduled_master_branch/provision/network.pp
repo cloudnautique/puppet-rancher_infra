@@ -4,52 +4,24 @@ class rancher_infra::ci::scheduled_master_branch::provision::network(
   Hash[String, String]                $tags = $::rancher_infra::ci::scheduled_master_branch::provision::tags,
   ) {
 
-  $cidr_block = '172.16.100.0/24'
+  $vpc_cidr_block = '172.16.0.0/16'
+  $subnet_cidr_block = '172.16.100.0/24'
 
   ec2_vpc { 'ci-scheduled-master-vpc':
     ensure => present,
-    cidr_block => $cidr_block,
+    cidr_block => $vpc_cidr_block,
     instance_tenancy => 'default',
     region => $aws_region,
     tags => $tags,
-  } ->
-
-  ec2_vpc_subnet { 'ci-scheduled-master-subnet':
-    ensure => present,
-    vpc => 'ci-scheduled-master-vpc',
-    region => $aws_region,
-    availability_zone => "${aws_region}${aws_zone}",
-    cidr_block => $cidr_block,
-    tags => $tags,
-  } ->
-
-  ec2_securitygroup { 'ci-scheduled-master-sg':
-    ensure => present,
-    description => 'SG for Rancher HA demo',
-    region => $aws_region,
-    ingress => [
-      { security_group => 'ci-scheduled-master-sg' },
-      { protocol => 'tcp', port => '22',   cidr => '0.0.0.0/0' },
-      { protocol => 'tcp', port => '8080', cidr => '0.0.0.0/0' },
-      { protocol => 'icmp', cidr => '0.0.0.0/0' },
-    ],
-    vpc => 'ci-scheduled-master-vpc',
-    tags => $tags,
-  } ->
-
-  ec2_vpc_internet_gateway { 'ci-scheduled-master-vpc-gateway':
-    ensure => present,
-    region => $aws_region,
-    vpc => 'ci-scheduled-master-vpc',
-  } ->
-
-  ec2_vpc_routetable { 'ci-scheduled-master-vpc-routing':
+  }
+    
+  ec2_vpc_routetable { 'ci-scheduled-master-subnet-routing':
     ensure => present,
     region => $aws_region,
     vpc => 'ci-scheduled-master-vpc',
     routes => [
       {
-        destination_cidr_block => $cidr_block,
+        destination_cidr_block => $vpc_cidr_block,
         gateway => 'local',
       },
       {
@@ -57,5 +29,58 @@ class rancher_infra::ci::scheduled_master_branch::provision::network(
         gateway => 'ci-scheduled-master-vpc-gateway',
       },
     ],
-  }  
+  }
+
+  ec2_vpc_subnet { 'ci-scheduled-master-subnet':
+    ensure => present,
+    vpc => 'ci-scheduled-master-vpc',
+    region => $aws_region,
+    availability_zone => "${aws_region}${aws_zone}",
+    cidr_block => $subnet_cidr_block,
+    route_table => 'ci-scheduled-master-subnet-routing',
+    tags => $tags,
+  } ->
+
+  ec2_securitygroup { 'ci-scheduled-master-sg':
+    ensure => present,
+    description => 'SG for Rancher CI nodes',
+    region => $aws_region,
+    ingress => [
+      { security_group => 'ci-scheduled-master-sg' },
+      { protocol => 'tcp', port => '22', cidr => '104.197.15.75/32' }, # jenkins-poc.rancher.io
+      { protocol => 'tcp', port => '8080', cidr => '104.197.15.75/32' }, # jenkins-poc.rancher.io
+      { protocol => 'tcp', port => '8081', cidr => '104.197.15.75/32' }, # jenkins-poc.rancher.io
+      { protocol => 'tcp', port => '8082', cidr => '104.197.15.75/32' }, # jenkins-poc.rancher.io
+      { protocol => 'tcp', port => '8083', cidr => '104.197.15.75/32' }, # jenkins-poc.rancher.io
+      { protocol => 'tcp', port => '8084', cidr => '104.197.15.75/32' }, # jenkins-poc.rancher.io
+      { protocol => 'tcp', port => '8085', cidr => '104.197.15.75/32' }, # jenkins-poc.rancher.io
+      { protocol => 'tcp', port => '8086', cidr => '104.197.15.75/32' }, # jenkins-poc.rancher.io
+      { protocol => 'tcp', port => '8087', cidr => '104.197.15.75/32' }, # jenkins-poc.rancher.io
+      { protocol => 'tcp', port => '8088', cidr => '104.197.15.75/32' }, # jenkins-poc.rancher.io
+      { protocol => 'tcp', port => '8089', cidr => '104.197.15.75/32' }, # jenkins-poc.rancher.io
+      { protocol => 'tcp', port => '8090', cidr => '104.197.15.75/32' }, # jenkins-poc.rancher.io
+      { protocol => 'tcp', port => '22', cidr => '162.231.244.100/32' }, # Nathan from Milpitas
+      { protocol => 'tcp', port => '8080', cidr => '162.231.244.100/32' }, # Nathan from Milpitas
+      { protocol => 'tcp', port => '8081', cidr => '162.231.244.100/32' }, # Nathan from Milpitas
+      { protocol => 'tcp', port => '8082', cidr => '162.231.244.100/32' }, # Nathan from Milpitas
+      { protocol => 'tcp', port => '8083', cidr => '162.231.244.100/32' }, # Nathan from Milpitas
+      { protocol => 'tcp', port => '8084', cidr => '162.231.244.100/32' }, # Nathan from Milpitas
+      { protocol => 'tcp', port => '8085', cidr => '162.231.244.100/32' }, # Nathan from Milpitas
+      { protocol => 'tcp', port => '8086', cidr => '162.231.244.100/32' }, # Nathan from Milpitas
+      { protocol => 'tcp', port => '8087', cidr => '162.231.244.100/32' }, # Nathan from Milpitas
+      { protocol => 'tcp', port => '8088', cidr => '162.231.244.100/32' }, # Nathan from Milpitas
+      { protocol => 'tcp', port => '8089', cidr => '162.231.244.100/32' }, # Nathan from Milpitas
+      { protocol => 'tcp', port => '8090', cidr => '162.231.244.100/32' }, # Nathan from Milpitas
+      { protocol => 'tcp', port => '22',   cidr => '0.0.0.0/0' },
+      { protocol => 'icmp', cidr => '0.0.0.0/0' },
+    ],
+    vpc => 'ci-scheduled-master-vpc',
+    tags => $tags,
+  }
+
+  ec2_vpc_internet_gateway { 'ci-scheduled-master-vpc-gateway':
+    ensure => present,
+    region => $aws_region,
+    vpc => 'ci-scheduled-master-vpc',
+  }
 }

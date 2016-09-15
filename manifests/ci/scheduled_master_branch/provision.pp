@@ -1,16 +1,22 @@
 class rancher_infra::ci::scheduled_master_branch::provision(
   Pattern[/^[a-z]{2}\-[a-z]+\-\d+$/]  $aws_region,
   Pattern[/^[a-e]$/]                  $aws_zone,
-  Pattern[/^.+$/]                     $mysql_root_password,
-  Pattern[/^.+$/]                     $rancher_version,
+  Pattern[/^ami\-.+$/]                $default_ami,
   Pattern[/^.+$/]                     $ssh_key, # this must already exist!
+  Enum['absent', 'present', 'agents'] $ensure,
+  Hash[String, String]                $tags,
   ) {
 
-  $tags = { 'is_ci' => 'true', 'ci' => 'scheduled_master_branch', 'owner' => $::id }
+  case $ensure {
+    'present': {
+      class { '::rancher_infra::ci::scheduled_master_branch::provision::network': } ->
+      class { '::rancher_infra::ci::scheduled_master_branch::provision::instances': } ~>
+      Class['::rancher_infra::ci::scheduled_master_branch::provision']
+    }
 
-  class { '::rancher_infra::ci::scheduled_master_branch::provision::network': } ->
-#  class { '::rancher_infra::ci::scheduled_master_branch::provision::database': } ~>
-#  class { '::rancher_infra::ci::scheduled_master_branch::provision::instances': } ~>
-#  class { '::rancher_infra::ci::scheduled_master_branch::provision::lb': } ->
-  Class['::rancher_infra::ci::scheduled_master_branch::provision']
+    'agents': {
+      class { '::rancher_infra::ci::scheduled_master_branch::provision::instances_agents': } ->
+      Class['::rancher_infra::ci::scheduled_master_branch::provision']
+    }
+  }
 }

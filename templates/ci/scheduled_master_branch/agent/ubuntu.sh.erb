@@ -1,0 +1,14 @@
+#!/bin/bash
+
+set -eux
+
+export DEBIAN_FRONTEND=noninteractive
+export DEBCONF_NONINTERACTIVE_SEEN=true
+
+apt-get update
+apt-get dist-upgrade -y
+apt-get install -y puppet git
+puppet resource service puppet enable=false ensure=stopped
+puppet module install garethr/docker
+puppet apply -e 'include ::docker'; sleep 5
+docker pull rancher/agent:stable

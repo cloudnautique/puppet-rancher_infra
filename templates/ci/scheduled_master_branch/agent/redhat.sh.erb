@@ -1,0 +1,11 @@
+#!/bin/bash
+
+set -eux
+
+yum update -y
+yum upgrade -y
+yum install puppet -y
+puppet resource service puppet enable=false ensure=stopped
+puppet module install garethr/docker
+puppet apply -e 'include ::docker'; sleep 5
+docker pull rancher/agent:stable

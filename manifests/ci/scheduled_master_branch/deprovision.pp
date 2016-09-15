@@ -4,8 +4,7 @@ class rancher_infra::ci::scheduled_master_branch::deprovision(
   ) {
 
 #  class { '::rancher_infra::ci::scheduled_master_branch::deprovision::lb': } ->
-#  class { '::rancher_infra::ci::scheduled_master_branch::deprovision::instances': } ~>
-#  class { '::rancher_infra::ci::scheduled_master_branch::deprovision::database': } ~>
+  class { '::rancher_infra::ci::scheduled_master_branch::deprovision::instances': } ~>
   class { '::rancher_infra::ci::scheduled_master_branch::deprovision::network': } ->
   Class['::rancher_infra::ci::scheduled_master_branch::deprovision']
 }
