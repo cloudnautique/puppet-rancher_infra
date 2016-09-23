@@ -1,4 +1,3 @@
 ---
-rancher_infra::aws_region: "us-west-2"
 rancher_infra::aws_zone: "a"
 rancher_infra::default_ami: "ami-a9b972c9"

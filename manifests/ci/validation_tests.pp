@@ -1,4 +1,4 @@
-class rancher_infra::ci::on_tag(
+class rancher_infra::ci::validation_tests(
   Pattern[/^.+$/]                               $uuid,
   Pattern[/^[a-z]{2}\-[a-z]+\-\d+$/]            $aws_region          = $::rancher_infra::aws_region,
   Pattern[/^[a-e]$/]                            $aws_zone            = $::rancher_infra::aws_zone,
@@ -10,20 +10,18 @@ class rancher_infra::ci::on_tag(
 
   case $ensure {
     'present','agents': {
-      class { '::rancher_infra::ci::on_tag::provision':
+      class { '::rancher_infra::ci::validation_tests::provision':
         ensure => $ensure,
         aws_region => $aws_region,
         aws_zone => $aws_zone,
         ssh_key => $ssh_key,
-        tags => { 'is_ci' => 'true', 'ci' => 'on_tag', 'owner' => $::id, 'commit' => $uuid, },
+        uuid => $uuid,
+        tags => { 'is_ci' => 'true', 'ci' => 'validation_tests', 'owner' => $::id, 'commit' => $uuid, },
       }
     }
 
     'absent': {
-      class { '::rancher_infra::ci::on_tag::deprovision':
-        aws_region => $aws_region,
-        aws_zone => $aws_zone,
-      }
+      class { '::rancher_infra::ci::validation_tests::deprovision': aws_region => $aws_region, uuid => $uuid, }
     }
     
     default: { fail("Invalid value \'${ensure}\' passed for 'ensure'!") }
