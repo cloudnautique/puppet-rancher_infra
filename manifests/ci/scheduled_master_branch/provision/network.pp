@@ -59,18 +59,30 @@ class rancher_infra::ci::scheduled_master_branch::provision::network(
       { protocol => 'tcp', port => '8088', cidr => '104.197.15.75/32' }, # jenkins-poc.rancher.io
       { protocol => 'tcp', port => '8089', cidr => '104.197.15.75/32' }, # jenkins-poc.rancher.io
       { protocol => 'tcp', port => '8090', cidr => '104.197.15.75/32' }, # jenkins-poc.rancher.io
-      { protocol => 'tcp', port => '22', cidr => '162.231.244.100/32' }, # Nathan from Milpitas
-      { protocol => 'tcp', port => '8080', cidr => '162.231.244.100/32' }, # Nathan from Milpitas
-      { protocol => 'tcp', port => '8081', cidr => '162.231.244.100/32' }, # Nathan from Milpitas
-      { protocol => 'tcp', port => '8082', cidr => '162.231.244.100/32' }, # Nathan from Milpitas
-      { protocol => 'tcp', port => '8083', cidr => '162.231.244.100/32' }, # Nathan from Milpitas
-      { protocol => 'tcp', port => '8084', cidr => '162.231.244.100/32' }, # Nathan from Milpitas
-      { protocol => 'tcp', port => '8085', cidr => '162.231.244.100/32' }, # Nathan from Milpitas
-      { protocol => 'tcp', port => '8086', cidr => '162.231.244.100/32' }, # Nathan from Milpitas
-      { protocol => 'tcp', port => '8087', cidr => '162.231.244.100/32' }, # Nathan from Milpitas
-      { protocol => 'tcp', port => '8088', cidr => '162.231.244.100/32' }, # Nathan from Milpitas
-      { protocol => 'tcp', port => '8089', cidr => '162.231.244.100/32' }, # Nathan from Milpitas
-      { protocol => 'tcp', port => '8090', cidr => '162.231.244.100/32' }, # Nathan from Milpitas
+      { protocol => 'tcp', port => '22', cidr => '50.255.37.17/32' }, # Cupertino office
+      { protocol => 'tcp', port => '8080', cidr => '50.255.37.17/32' }, # Cupertino office
+      { protocol => 'tcp', port => '8081', cidr => '50.255.37.17/32' }, # Cupertino office
+      { protocol => 'tcp', port => '8082', cidr => '50.255.37.17/32' }, # Cupertino office
+      { protocol => 'tcp', port => '8083', cidr => '50.255.37.17/32' }, # Cupertino office
+      { protocol => 'tcp', port => '8084', cidr => '50.255.37.17/32' }, # Cupertino office
+      { protocol => 'tcp', port => '8085', cidr => '50.255.37.17/32' }, # Cupertino office
+      { protocol => 'tcp', port => '8086', cidr => '50.255.37.17/32' }, # Cupertino office
+      { protocol => 'tcp', port => '8087', cidr => '50.255.37.17/32' }, # Cupertino office
+      { protocol => 'tcp', port => '8088', cidr => '50.255.37.17/32' }, # Cupertino office
+      { protocol => 'tcp', port => '8089', cidr => '50.255.37.17/32' }, # Cupertino office
+      { protocol => 'tcp', port => '8090', cidr => '50.255.37.17/32' }, # Cupertino office
+      { protocol => 'tcp', port => '22', cidr => '98.191.181.70/32' }, # AZ office
+      { protocol => 'tcp', port => '8080', cidr => '98.191.181.70/32' }, # AZ office
+      { protocol => 'tcp', port => '8081', cidr => '98.191.181.70/32' }, # AZ office
+      { protocol => 'tcp', port => '8082', cidr => '98.191.181.70/32' }, # AZ office
+      { protocol => 'tcp', port => '8083', cidr => '98.191.181.70/32' }, # AZ office
+      { protocol => 'tcp', port => '8084', cidr => '98.191.181.70/32' }, # AZ office
+      { protocol => 'tcp', port => '8085', cidr => '98.191.181.70/32' }, # AZ office
+      { protocol => 'tcp', port => '8086', cidr => '98.191.181.70/32' }, # AZ office
+      { protocol => 'tcp', port => '8087', cidr => '98.191.181.70/32' }, # AZ office
+      { protocol => 'tcp', port => '8088', cidr => '98.191.181.70/32' }, # AZ office
+      { protocol => 'tcp', port => '8089', cidr => '98.191.181.70/32' }, # AZ office
+      { protocol => 'tcp', port => '8090', cidr => '98.191.181.70/32' }, # AZ office
       { protocol => 'tcp', port => '22',   cidr => '0.0.0.0/0' },
       { protocol => 'icmp', cidr => '0.0.0.0/0' },
     ],

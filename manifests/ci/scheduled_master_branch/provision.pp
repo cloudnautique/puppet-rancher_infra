@@ -10,7 +10,7 @@ class rancher_infra::ci::scheduled_master_branch::provision(
   case $ensure {
     'present': {
       class { '::rancher_infra::ci::scheduled_master_branch::provision::network': } ->
-      class { '::rancher_infra::ci::scheduled_master_branch::provision::instances': } ~>
+#      class { '::rancher_infra::ci::scheduled_master_branch::provision::instances': } ~>
       Class['::rancher_infra::ci::scheduled_master_branch::provision']
     }
 
