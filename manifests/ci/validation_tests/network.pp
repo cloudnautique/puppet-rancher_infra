@@ -5,7 +5,7 @@ class rancher_infra::ci::validation_tests::network(
   Optional[Hash[String, String]]      $addtl_tags = undef,
   ) {
 
-  $_tags = merge($tags, $::rancher_infra::ci::validation_tests::default_tags)
+  $_tags = merge($addtl_tags, $::rancher_infra::ci::validation_tests::default_tags)
   $vpc_cidr_block = '172.16.0.0/16'
   $subnet_cidr_block = '172.16.100.0/24'
 
@@ -44,23 +44,26 @@ class rancher_infra::ci::validation_tests::network(
       route_table => "ci-validation-tests-subnet-routing",
       tags => $_tags,
       } ->
-      
-      # WARNING :: Do not condense the ingress rules to all protocols below or it triggers an idempotency bug/interaction
-      # between docker-machine and the AWS PI.
+
+      # WARNING :: Yes, the rules below can be simplified to remove explicit port rules however that results
+      # in breakage in docker-machine (09.2016) SSH rules handling. If the rule is specified here then docker-machine
+      # will not lose its f-ing mind.
       ec2_securitygroup { "ci-validation-tests-sg":
         ensure => present,
         description => 'SG for Rancher CI nodes',
         region => $aws_region,
         ingress => [
           { security_group => "ci-validation-tests-sg" },
-          { protocol => 'tcp', cidr => '0.0.0.0/0', from_port => '1', to_port => '65535', },
-          { protocol => 'udp', cidr => '0.0.0.0/0', from_port => '1', to_port => '65535', },
-          { protocol => 'icmp', cidr => '0.0.0.0/0' }
+          { security_group => "ci-validation-tests-sg", protocol => 'tcp', port => '22', },
+          { security_group => "ci-validation-tests-sg", protocol => 'tcp', port => '2376', },
+          { cidr => '0.0.0.0/0', },
+          { protocol => 'tcp', cidr => '0.0.0.0/0', port => '22', },
+          { protocol => 'tcp', cidr => '0.0.0.0/0', port => '2376', },
         ],
         vpc => "ci-validation-tests-vpc",
         tags => $_tags,
       }
-      
+
       ec2_vpc_internet_gateway { "ci-validation-tests-vpc-gateway":
         ensure => present,
         region => $aws_region,
